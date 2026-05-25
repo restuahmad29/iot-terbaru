@@ -1,4 +1,5 @@
 let chart; // Variabel global penampung objek Chart.js
+let dashboardPollInterval = null; // ✅ SINKRON: Penampung referensi interval agar bisa dibersihkan
 
 // Mengambil data user yang login aman dari localStorage
 const user = JSON.parse(localStorage.getItem("user")) || { role: "guest" };
@@ -132,8 +133,9 @@ function renderModeSection(mode) {
   const activeMode = mode ? String(mode).toLowerCase().trim() : "";
   console.log("⚙️ Sistem mendeteksi mode aktif:", `"${activeMode}"`);
 
+  // Sinkronisasi penamaan parameter enum bahasa Indonesia dan bahasa Inggris dari Laravel
   if (activeMode === "otomatis" || activeMode === "auto" || activeMode === "automatic") {
-    otomatisSec.remove("hidden");
+    otomatisSec.classList.remove("hidden"); 
     console.log("🎨 Layout otomatis berhasil dibuka.");
   } 
   else if (activeMode === "jadwal" || activeMode === "schedule") {
@@ -151,10 +153,9 @@ function renderModeSection(mode) {
 
 async function changeMode(mode) {
   try {
-    let payloadMode = mode;
     await apiFetch("/change-mode", {
       method: "POST",
-      body: JSON.stringify({ mode: payloadMode }),
+      body: JSON.stringify({ mode: mode }),
     });
 
     alert(`Mode berhasil beralih ke: ${mode}`);
@@ -209,12 +210,17 @@ function renderSchedules(schedules) {
   });
 }
 
+// === FIX VALIDASI AMAN FUNGSI ADD SCHEDULE ===
 async function addSchedule() {
   const time = document.getElementById("timeInput").value;
-  const duration = document.getElementById("durationInput").value;
+  const durationInput = document.getElementById("durationInput").value;
+  
+  // Konversi durasi ke tipe data Integer
+  const duration = parseInt(durationInput, 10);
 
-  if (!time || !duration) {
-    alert("Semua data input jadwal wajib diisi!");
+  // Validasi lapis pertama: Pastikan tidak kosong, bukan huruf (NaN), dan di atas 0 detik
+  if (!time || isNaN(duration) || duration <= 0) {
+    alert("Mohon masukkan waktu dan durasi penyiraman yang valid (minimal 1 detik)!");
     return;
   }
 
@@ -225,8 +231,11 @@ async function addSchedule() {
     });
 
     alert("Jadwal penyiraman berhasil ditambahkan!");
+    
+    // Reset form input setelah data sukses masuk backend
     document.getElementById("timeInput").value = "";
     document.getElementById("durationInput").value = "";
+    
     getSchedules();
   } catch (error) {
     console.error("Gagal menambahkan jadwal:", error);
@@ -244,7 +253,7 @@ async function deleteSchedule(id) {
   }
 }
 
-// === 4. BOOTLOADER DASHBOARD (Urutan Eksekusi Diatur Ketat) ===
+// === 4. BOOTLOADER DASHBOARD (DIOPTIMASI AGAR TIDAK CODESMALL / BLOCKED) ===
 async function loadDashboard() {
   const adminSection = document.getElementById("adminSection");
   if (adminSection) {
@@ -255,22 +264,42 @@ async function loadDashboard() {
     }
   }
 
-  // A. Siapkan Canvas Chart kosong terlebih dahulu di memori DOM browser
+  // A. Siapkan Canvas Chart kosong terlebih dahulu
   initChart();
 
-  // B. Panggil data pendukung secara independen
+  // B. Panggil konfigurasi alat (Mode Otomatis / Jadwal / Manual)
   getConfig();
   
-  // C. Tarik history data awal untuk mengisi Chart pertama kali, baru setelah itu aktifkan getSensor realtime
-  await getHistory();
+  // C. Tarik history data & sensor secara aman tanpa saling memblokir jika salah satu API error
+  try {
+    await getHistory();
+  } catch (err) {
+    console.warn("Riwayat sensor kosong atau API history bermasalah, grafik dilewati.");
+  }
+
+  // D. Jalankan trigger sensor pertama kali
   getSensor();
+
+  // === 5. INTERVAL POOLING AMAN DENGAN CLEANUP ===
+  // ✅ PEMBERSIHAN MULTI-TRIGER: Hancurkan interval lama jika fungsi terpanggil kembali
+  if (dashboardPollInterval) {
+    clearInterval(dashboardPollInterval);
+  }
+
+  // ✅ Simpan referensi interval baru ke variabel global
+  dashboardPollInterval = setInterval(() => {
+    getSensor();
+  }, 5000);
 }
+
+// === 6. AMANKAN MEMORI KETIKA USER BERPINDAH HALAMAN ===
+window.addEventListener("beforeunload", () => {
+  if (dashboardPollInterval) {
+    clearInterval(dashboardPollInterval);
+    console.log("Sistem menghentikan polling IoT. Memori dibersihkan dengan aman!");
+  }
+});
 
 document.addEventListener("DOMContentLoaded", () => {
   loadDashboard();
 });
-
-// === 5. INTERVAL POOLING (Grafik & Teks diperbarui bersamaan tiap 5 detik) ===
-setInterval(() => {
-  getSensor();
-}, 5000);

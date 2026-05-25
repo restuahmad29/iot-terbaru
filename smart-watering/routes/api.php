@@ -6,7 +6,8 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DeviceController;
 use App\Http\Controllers\Api\ScheduleController;
 use App\Http\Controllers\Api\SensorController;
-use App\Http\Controllers\Api\EducationController; // DITAMBAHKAN: Import Controller Baru
+use App\Http\Controllers\Api\EducationController;
+use App\Http\Controllers\Api\UserController; // ✅ BARU: Pastikan mengimport UserController di sini
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,9 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
+    // ✅ BARU: Rute untuk mengupdate nomor seri alat (device_serial) milik user
+    Route::post('/user/update-device', [UserController::class, 'updateDevice']);
+
     // Kontrol Device
     Route::post('/change-mode', [DeviceController::class, 'changeMode']);
     Route::post('/manual-water', [DeviceController::class, 'manualWater']);
@@ -39,6 +43,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Data Sensor Monitoring
     Route::get('/sensor/latest', [SensorController::class, 'latest']); 
     Route::get('/sensor/history', [SensorController::class, 'history']); 
+
+    //rute pendaftaran alat
+    Route::post('/user/update-device', [UserController::class, 'updateDevice']);
 
     // Jadwal Penyiraman (Melihat Data)
     Route::get('/schedules', [ScheduleController::class, 'index']);

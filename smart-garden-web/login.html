@@ -5,6 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - Smart Garden IoT</title>
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
   <link rel="stylesheet" href="./assets/css/style.css" />
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -55,12 +56,17 @@
 
       <button 
         type="submit" 
-        class="w-full py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.98] flex items-center justify-center gap-2 text-sm"
+        class="w-full py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.98] flex items-center justify-center gap-2 text-sm cursor-pointer"
       >
         <span>Masuk ke Dashboard</span>
         <i data-lucide="arrow-right" class="w-4 h-4"></i>
       </button>
     </form>
+
+    <div class="mt-5 text-center text-sm text-gray-500 font-semibold">
+      Belum memiliki akun? 
+      <a href="register.html" class="text-green-600 hover:text-green-700 transition-colors">Daftar di sini</a>
+    </div>
 
     <div 
       id="errorText" 

@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Katalog Edukasi - Smart Garden</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -39,7 +40,7 @@
 
       <section class="pb-20">
         <div id="plantContainer" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          </div>
+        </div>
       </section>
 
     </main>
@@ -64,12 +65,12 @@
 
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-bold uppercase text-gray-500 mb-2">Rentang Kelembaban</label>
-            <input type="text" id="plantMoisture" required placeholder="Contoh: 60% - 75%" class="w-full p-3.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
+            <label class="block text-xs font-bold uppercase text-gray-500 mb-2">Min. Kelembaban (%)</label>
+            <input type="number" id="plantMinMoisture" min="0" max="100" required placeholder="Contoh: 60" class="w-full p-3.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
           </div>
           <div>
-            <label class="block text-xs font-bold uppercase text-gray-500 mb-2">Min. Kelembaban (%)</label>
-            <input type="number" id="plantMinMoisture" required placeholder="Contoh: 60" class="w-full p-3.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
+            <label class="block text-xs font-bold uppercase text-gray-500 mb-2">Max. Kelembaban (%)</label>
+            <input type="number" id="plantMaxMoisture" min="0" max="100" required placeholder="Contoh: 75" class="w-full p-3.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
           </div>
         </div>
 
@@ -79,7 +80,7 @@
         </div>
 
         <div>
-          <label class="block text-xs font-bold uppercase text-gray-500 mb-2">Deskripsi & Edukasi Perawatan</label>
+          <label class="block text-xs font-gray-500 font-bold uppercase mb-2">Deskripsi & Edukasi Perawatan</label>
           <textarea id="plantDescription" rows="3" required placeholder="Tulis instruksi kebutuhan air singkat tanaman..." class="w-full p-3.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"></textarea>
         </div>
 

@@ -5,13 +5,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Edukasi Smart Garden - Sistem IoT Terintegrasi</title>
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
   <link rel="stylesheet" href="./assets/css/style.css" />
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body class="bg-gray-50 text-gray-800 antialiased font-sans">
 
-  <!-- NAVBAR -->
   <nav class="bg-white shadow-sm px-8 py-4 flex justify-between items-center sticky top-0 z-50">
     <div class="flex items-center gap-3">
       <i data-lucide="sprout" class="text-green-600 w-8 h-8"></i>
@@ -25,7 +25,6 @@
       </a>
       <a href="catalog.html" class="hover:text-green-700 transition-colors">Katalog</a>
       
-      <!-- KONTANER AUTH DENGAN DETEKSI STATE OTOMATIS -->
       <div id="auth-nav">
         <a href="login.html" class="px-4 py-2 rounded-xl bg-green-700 text-white text-sm hover:bg-green-800 transition-colors shadow-sm">
           Login
@@ -34,7 +33,6 @@
     </div>
   </nav>
 
-  <!-- HERO SECTION -->
   <section class="px-8 py-24 text-center bg-gradient-to-b from-green-100/70 via-green-50/30 to-gray-50">
     <span class="px-4 py-1.5 bg-green-200/60 text-green-800 text-xs font-bold rounded-full uppercase tracking-widest inline-flex items-center gap-1.5 mb-4">
       <i data-lucide="graduation-cap" class="w-4 h-4"></i> Pusat Pengetahuan IoT
@@ -47,7 +45,6 @@
     </p>
   </section>
 
-  <!-- APA ITU SMART GARDEN -->
   <section class="px-8 py-16">
     <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
       <div class="relative">
@@ -68,7 +65,7 @@
           <i data-lucide="info" class="text-green-600 w-10 h-10"></i> Apa Itu Smart Garden?
         </h2>
         <p class="text-gray-600 text-lg leading-relaxed">
-          Smart Garden adalah inovasi sistem manajemen perawatan vegetasi berbasis **Internet of Things (IoT)**. Berbeda dengan penyiraman tradisional, sistem ini memanfaatkan jaringan sensor otomatis untuk memantau kondisi tanah secara objektif tanpa spekulasi manusia.
+          Smart Garden adalah inovasi sistem manajemen perawatan vegetasi berbasis <strong class="font-black text-gray-900">Internet of Things (IoT)</strong>. Berbeda dengan penyiraman tradisional, sistem ini memanfaatkan jaringan sensor otomatis untuk memantau kondisi tanah secara objektif tanpa spekulasi manusia.
         </p>
         <p class="text-gray-600 text-lg leading-relaxed mt-4">
           Dengan mengintegrasikan perangkat keras di lapangan dan aplikasi web dashboard, Anda memiliki kendali penuh untuk menjaga siklus hidrasi tanaman tetap prima kapan saja dan di mana saja.
@@ -94,7 +91,6 @@
     </div>
   </section>
 
-  <!-- CARA KERJA -->
   <section class="px-8 py-20 bg-white border-y border-gray-200">
     <div class="max-w-6xl mx-auto">
       <h2 class="text-4xl font-black text-center text-gray-900 mb-4 tracking-tight">Cara Kerja & Alur Data Sistem</h2>
@@ -108,7 +104,7 @@
           </div>
           <h3 class="text-2xl font-black mb-4 text-gray-900">1. Data Hambatan Sensor</h3>
           <p class="text-gray-600 leading-relaxed text-sm">
-            Sensor *Soil Moisture* mengukur resistansi elektrik tanah. Jika tanah kering, hambatan tinggi (nilai ADC naik). Jika basah, arus listrik lancar (nilai ADC turun). Data diubah menjadi persentase skala <span class="font-semibold text-blue-600">0% - 100%</span> melalui proses kalibrasi matematika.
+            Sensor <em>Soil Moisture</em> mengukur resistansi elektrik tanah. Jika tanah kering, hambatan tinggi (nilai ADC naik). Jika basah, arus listrik lancar (nilai ADC turun). Data diubah menjadi persentase skala <span class="font-semibold text-blue-600">0% - 100%</span> melalui proses kalibrasi matematika.
           </p>
         </div>
 
@@ -119,7 +115,7 @@
           </div>
           <h3 class="text-2xl font-black mb-4 text-gray-900">2. Transmisi API RESTful</h3>
           <p class="text-gray-600 leading-relaxed text-sm">
-            Mikrokontroler **ESP32** memproses parameter analog sensor. Melalui modul Wi-Fi internal, ESP32 melempar payload data berformat **JSON** menggunakan metode `HTTP POST` langsung ke endpoint API backend server Laravel secara terus-menerus (*pooling*).
+            Mikrokontroler <strong class="font-bold text-gray-900">ESP32</strong> memproses parameter analog sensor. Melalui modul Wi-Fi internal, ESP32 melempar payload data berformat <strong class="font-bold text-gray-900">JSON</strong> menggunakan metode `HTTP POST` langsung ke endpoint API backend server Laravel secara terus-menerus (<em>pooling</em>).
           </p>
         </div>
 
@@ -130,14 +126,13 @@
           </div>
           <h3 class="text-2xl font-black mb-4 text-gray-900">3. Eksekusi Mekanis Relay</h3>
           <p class="text-gray-600 leading-relaxed text-sm">
-            Server memvalidasi aturan (*rule*): Jika kelembaban di bawah batas minimum (Mode Otomatis), atau jam NTP sesuai target (Mode Jadwal), perintah balik dikirim ke ESP32 untuk memutus/menyambung arus listrik **Relay 5V**, memicu pompa air menyala dengan aman.
+            Server memvalidasi aturan (<em>rule</em>): Jika kelembaban di bawah batas minimum (Mode Otomatis), atau jam NTP sesuai target (Mode Jadwal), perintah balik dikirim ke ESP32 untuk memutus/menyambung arus listrik <strong class="font-bold text-gray-900">Relay 5V</strong>, memicu pompa air menyala dengan aman.
           </p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- KATALOG HARWARE -->
   <section class="px-8 py-20">
     <div class="max-w-6xl mx-auto">
       <h2 class="text-4xl font-black text-center text-gray-900 mb-4 tracking-tight">Katalog Komponen Hardware</h2>
@@ -175,7 +170,7 @@
           <div>
             <div class="p-3 bg-gray-100 rounded-xl w-fit text-gray-700 mb-4"><i data-lucide="waves"></i></div>
             <h4 class="font-black text-xl text-gray-800 mb-2">Mini Submersible Pump 5V/12V</h4>
-            <p class="text-xs text-gray-500 leading-relaxed">Pompa air mikro celup berdaya rendah yang berfungsi menyalurkan sirkulasi air menuju pipa-pipa dispenser atau nozzle *drip* tanaman.</p>
+            <p class="text-xs text-gray-500 leading-relaxed">Pompa air mikro celup berdaya rendah yang berfungsi menyalurkan sirkulasi air menuju pipa-pipa dispenser atau nozzle <em>drip</em> tanaman.</p>
           </div>
           <span class="mt-4 inline-block text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md w-fit">Mechanical Output</span>
         </div>
@@ -183,7 +178,6 @@
     </div>
   </section>
 
-  <!-- TIPS -->
   <section class="px-8 py-20 bg-gray-100/60 border-t border-gray-200">
     <div class="max-w-6xl mx-auto">
       <h2 class="text-4xl font-black text-center text-gray-900 mb-16 tracking-tight flex items-center justify-center gap-3">
@@ -198,7 +192,7 @@
           <div>
             <h3 class="text-2xl font-black mb-3 text-gray-900">Bahaya Overwatering</h3>
             <p class="text-gray-600 leading-relaxed text-sm">
-              Tanaman membutuhkan oksigen di dalam pori-pori tanah. Menyiram terlalu sering hingga air menggenang membuat akar membusuk akibat bakteri anaerob (*root rot*). Gunakan ambang batas kelembaban maksimal **70% - 80%** di sistem Anda untuk menghentikan pompa.
+              Tanaman membutuhkan oksigen di dalam pori-pori tanah. Menyiram terlalu sering hingga air menggenang membuat akar membusuk akibat bakteri anaerob (<em>root rot</em>). Gunakan ambang batas kelembaban maksimal <strong class="font-bold text-gray-900">70% - 80%</strong> di sistem Anda untuk menghentikan pompa.
             </p>
           </div>
         </div>
@@ -218,7 +212,6 @@
     </div>
   </section>
 
-  <!-- KEUNGGULAN -->
   <section class="px-8 py-20 bg-green-700 text-white relative overflow-hidden">
     <div class="absolute inset-0 opacity-10 pointer-events-none">
       <div class="absolute -top-12 -left-12 w-64 h-64 border-4 border-white rounded-full"></div>
@@ -259,13 +252,12 @@
             <i data-lucide="terminal"></i>
           </div>
           <h3 class="text-3xl font-black mb-2">Modern</h3>
-          <p class="text-green-100 text-xs leading-relaxed">Memanfaatkan teknologi komputasi awan (*Cloud*) dan ekosistem IoT industri modern.</p>
+          <p class="text-green-100 text-xs leading-relaxed">Memanfaatkan teknologi komputasi awan (<em>Cloud</em>) dan ekosistem IoT industri modern.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer class="bg-gray-900 text-gray-400 px-8 py-10 text-center border-t border-gray-800">
     <div class="flex items-center justify-center gap-2 mb-4 text-white">
       <i data-lucide="leaf" class="w-5 h-5 text-green-500"></i>
@@ -275,18 +267,20 @@
     <p class="text-xs text-gray-600 mt-2">Smart Garden IoT © 2026. All Rights Reserved.</p>
   </footer>
 
-  <!-- SCRIPT LOGIKA UTAMA -->
   <script>
-    // 1. Render Ikon Pertama Kali
-    lucide.createIcons();
-
-    // 2. Logika Anti-Login Ulang Menggunakan Dompet Penyimpanan Browser (LocalStorage)
+    // FIX: Menggabungkan seluruh inisialisasi ke dalam satu wadah DOMContentLoaded tunggal demi stabilitas DOM
     document.addEventListener("DOMContentLoaded", function () {
+      
+      // 1. Render Ikon Lucide Komponen Statis Pertama Kali
+      if (typeof lucide !== "undefined") {
+        lucide.createIcons();
+      }
+
       const token = localStorage.getItem("user_token"); 
       const authNav = document.getElementById("auth-nav");
 
-      // Jika Kunci Akses / Token Terdeteksi Ada di Browser, Ganti Tombol Login Menjadi Kontrol Dashboard
-      if (token) {
+      // 2. Jika Kunci Akses / Token Terdeteksi Ada di Browser, Ganti Tombol Login Menjadi Kontrol Dashboard
+      if (token && authNav) {
         authNav.innerHTML = `
           <div class="flex items-center gap-4">
             <a href="dashboard.html" class="text-gray-700 hover:text-green-700 font-semibold flex items-center gap-1 transition-colors">
@@ -298,15 +292,20 @@
           </div>
         `;
         
-        // Memperbarui Render Struktur Ikon Lucide Baru yang Dimasukkan Melalui innerHTML
-        lucide.createIcons();
+        // Memperbarui Render Struktur Ikon Lucide Baru yang Dimasukkan Melalui innerHTML secara aman
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons();
+        }
 
         // Sistem Aksi Tombol Keluar (Log Out)
-        document.getElementById("btn-logout").addEventListener("click", function () {
-          localStorage.removeItem("user_token"); // Hapus Token Akses
-          alert("Anda telah berhasil keluar sistem.");
-          window.location.reload(); // Refresh halaman untuk mengembalikan tombol Login normal
-        });
+        const logoutBtn = document.getElementById("btn-logout");
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", function () {
+            localStorage.removeItem("user_token"); // Hapus Token Akses
+            alert("Anda telah berhasil keluar sistem.");
+            window.location.reload(); // Refresh halaman untuk mengembalikan tombol Login normal
+          });
+        }
       }
     });
   </script>

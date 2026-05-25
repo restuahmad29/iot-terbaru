@@ -1,18 +1,18 @@
-// Data Default awal jika LocalStorage kosong
+// Data Default awal jika LocalStorage kosong (Struktur baru tanpa string range)
 const defaultPlants = [
   {
     id: 1,
     name: "Tomat",
-    moisture: "60% - 80%",
     minMoisture: 60,
+    maxMoisture: 80,
     image: "https://images.unsplash.com/photo-1592841200221-a6898f307baa",
     description: "Tomat membutuhkan kelembaban stabil agar buah berkembang baik dan mencegah pembusukan ujung buah.",
   },
   {
     id: 2,
     name: "Cabai",
-    moisture: "50% - 70%",
     minMoisture: 50,
+    maxMoisture: 70,
     image: "https://images.unsplash.com/photo-1588252303782-cb80119abd6d",
     description: "Cabai tidak suka tanah terlalu basah karena akar mudah busuk. Penyiraman sebaiknya dilakukan perlahan.",
   },
@@ -22,7 +22,6 @@ const defaultPlants = [
 let plants = JSON.parse(localStorage.getItem("smart_garden_plants")) || defaultPlants;
 
 // DETEKSI ROLE YANG SEDANG LOGIN (Asumsi: 'admin' atau 'user')
-// Jika di auth.js belum disetting, kamu bisa mengujinya dengan mengetik localStorage.setItem('role', 'admin') di console browser
 const currentUserRole = localStorage.getItem("role") || "user"; 
 
 const container = document.getElementById("plantContainer");
@@ -37,14 +36,20 @@ function renderCatalog() {
 
   // 1. Tampilkan / Sembunyikan Tombol Utama "Tambah Tanaman" di pojok kanan atas
   if (currentUserRole === "admin") {
-    addBtn.classList.remove("hidden");
+    if (addBtn) {
+      addBtn.classList.remove("hidden");
+      addBtn.classList.add("flex");
+    }
   } else {
-    addBtn.classList.add("hidden");
+    if (addBtn) {
+      addBtn.classList.remove("flex");
+      addBtn.classList.add("hidden");
+    }
   }
 
   // 2. Render list kartu tanaman
   plants.forEach(plant => {
-    // Logika pengkondisian tombol aksi: jika admin, render tombolnya. Jika user, kosongkan ('').
+    // Logika pengkondisian tombol aksi untuk admin
     const adminActionsHtml = currentUserRole === "admin" ? `
       <div class="absolute top-4 right-4 flex gap-2 opacity-90">
         <button onclick="editPlant(${plant.id})" class="p-2.5 bg-white hover:bg-gray-100 text-gray-700 rounded-xl shadow-md transition-transform active:scale-90 cursor-pointer">
@@ -71,7 +76,7 @@ function renderCatalog() {
             <div class="flex flex-wrap gap-2 mb-4">
               <div class="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-xl font-bold text-xs">
                 <i data-lucide="droplet" class="w-3.5 h-3.5"></i>
-                <span>Ideal: ${plant.moisture}</span>
+                <span>Ideal: ${plant.minMoisture}% - ${plant.maxMoisture}%</span>
               </div>
               <div class="flex items-center gap-1.5 bg-blue-50 text-blue-700 px-3 py-1 rounded-xl font-bold text-xs">
                 <i data-lucide="gauge" class="w-3.5 h-3.5"></i>
@@ -93,7 +98,7 @@ function renderCatalog() {
   }
 }
 
-// === FUNGSI VALIDASI TAMBAHAN (Mencegah User bypass lewat Inspect Console) ===
+// === FUNGSI VALIDASI TAMBAHAN ===
 function checkAdminAccess() {
   if (currentUserRole !== "admin") {
     alert("Akses ditolak! Anda bukan admin.");
@@ -115,21 +120,39 @@ function closeModal() {
   modal.classList.add("hidden");
 }
 
+// === FUNGSI UTAMA CREATE & UPDATE (DENGAN STRUKTUR BARU) ===
 function savePlant(event) {
   event.preventDefault();
   if (!checkAdminAccess()) return;
 
   const id = document.getElementById("plantId").value;
   const name = document.getElementById("plantName").value;
-  const moisture = document.getElementById("plantMoisture").value;
-  const minMoisture = parseInt(document.getElementById("plantMinMoisture").value);
+  const minMoisture = parseInt(document.getElementById("plantMinMoisture").value, 10);
+  const maxMoisture = parseInt(document.getElementById("plantMaxMoisture").value, 10);
   const image = document.getElementById("plantImage").value;
   const description = document.getElementById("plantDescription").value;
 
+  // Validasi input logika batas angka
+  if (minMoisture >= maxMoisture) {
+    alert("Nilai Minimum Kelembaban tidak boleh sama atau melebihi Nilai Maksimum!");
+    return;
+  }
+
+  const plantData = {
+    id: id ? parseInt(id, 10) : Date.now(),
+    name,
+    minMoisture,
+    maxMoisture,
+    image,
+    description
+  };
+
   if (id) {
-    plants = plants.map(p => p.id == id ? { id: parseInt(id), name, moisture, minMoisture, image, description } : p);
+    // Jalur Update data
+    plants = plants.map(p => p.id === parseInt(id, 10) ? plantData : p);
   } else {
-    plants.push({ id: Date.now(), name, moisture, minMoisture, image, description });
+    // Jalur Create data baru
+    plants.push(plantData);
   }
 
   localStorage.setItem("smart_garden_plants", JSON.stringify(plants));
@@ -137,6 +160,7 @@ function savePlant(event) {
   closeModal();
 }
 
+// === FUNGSI INJECT DATA KE FORM SAAT EDIT DITEKAN ===
 function editPlant(id) {
   if (!checkAdminAccess()) return;
   const plant = plants.find(p => p.id === id);
@@ -145,8 +169,8 @@ function editPlant(id) {
   document.getElementById("modalTitle").innerText = "Edit Informasi Tanaman";
   document.getElementById("plantId").value = plant.id;
   document.getElementById("plantName").value = plant.name;
-  document.getElementById("plantMoisture").value = plant.moisture;
   document.getElementById("plantMinMoisture").value = plant.minMoisture;
+  document.getElementById("plantMaxMoisture").value = plant.maxMoisture || plant.minMoisture + 20; // Fallback jika data lama tidak ada maxMoisture
   document.getElementById("plantImage").value = plant.image;
   document.getElementById("plantDescription").value = plant.description;
 

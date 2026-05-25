@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Garden - Buat Akun</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-50 flex min-h-screen items-center justify-center p-4 antialiased font-sans">
+
+  <div class="w-full max-w-md bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
+    <div class="flex flex-col items-center mb-8 text-center">
+      <div class="bg-emerald-100 p-3 rounded-2xl text-emerald-600 mb-3">
+        <i data-lucide="sprout" class="w-8 h-8"></i>
+      </div>
+      <h1 class="text-2xl font-black text-gray-800 tracking-tight">Mulai Smart Garden</h1>
+      <p class="text-sm text-gray-500 mt-1">Buat akun Anda untuk mengelola monitoring tanaman</p>
+    </div>
+
+    <form id="registerForm" class="space-y-4">
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-2">Nama Lengkap</label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+            <i data-lucide="user" class="w-5 h-5"></i>
+          </span>
+          <input type="text" id="nameInput" required placeholder="Nama Anda" 
+            class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-gray-700 font-medium">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-2">Alamat Email</label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+            <i data-lucide="mail" class="w-5 h-5"></i>
+          </span>
+          <input type="email" id="emailInput" required placeholder="contoh@email.com" 
+            class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-gray-700 font-medium">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-2">Password</label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+            <i data-lucide="lock" class="w-5 h-5"></i>
+          </span>
+          <input type="password" id="passwordInput" required placeholder="••••••••" 
+            class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-gray-700 font-medium">
+        </div>
+      </div>
+
+      <button type="submit" 
+        class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-2xl transition-all cursor-pointer shadow-md shadow-emerald-600/10 hover:shadow-lg hover:shadow-emerald-600/20 text-sm mt-2 flex items-center justify-center gap-2">
+        <i data-lucide="user-plus" class="w-4 h-4"></i>
+        <span>Daftar Sekarang</span>
+      </button>
+    </form>
+
+    <div class="mt-8 text-center text-sm text-gray-500 font-semibold">
+      Sudah punya akun? 
+      <a href="login.html" class="text-emerald-600 hover:text-emerald-700 transition-colors">Masuk di sini</a>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/register.js"></script>
+</body>
+</html>
