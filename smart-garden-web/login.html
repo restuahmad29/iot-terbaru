@@ -2,166 +2,95 @@
 <html lang="en">
 
 <head>
-
   <meta charset="UTF-8" />
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
-
-  <title>Login</title>
-
-  <link
-    rel="stylesheet"
-    href="./assets/css/style.css"
-  />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Smart Garden IoT</title>
+  <link rel="stylesheet" href="./assets/css/style.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body class="
-  bg-gray-100
-  min-h-screen
-  flex
-  items-center
-  justify-center
-  p-6
-">
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-6 antialiased font-sans">
 
-  <div class="
-    bg-white
-    p-10
-    rounded-3xl
-    shadow-xl
-    w-full
-    max-w-md
-  ">
+  <div class="bg-white p-10 rounded-3xl shadow-xl w-full max-w-md border border-gray-100 relative overflow-hidden">
+    <div class="absolute top-0 left-0 right-0 h-2 bg-green-600"></div>
 
-    <h1 class="
-      text-4xl
-      font-black
-      text-green-700
-      mb-2
-      text-center
-    ">
+    <div class="flex flex-col items-center mb-6">
+      <div class="p-3 bg-green-100 text-green-700 rounded-2xl mb-3">
+        <i data-lucide="sprout" class="w-8 h-8"></i>
+      </div>
+      <h1 class="text-3xl font-black text-gray-900 tracking-tight">
+        Smart Garden
+      </h1>
+      <p class="text-gray-500 text-sm mt-1">
+        Login ke dashboard monitoring IoT
+      </p>
+    </div>
 
-      Smart Garden
-
-    </h1>
-
-    <p class="
-      text-gray-500
-      text-center
-      mb-8
-    ">
-
-      Login ke dashboard IoT
-
-    </p>
-
-    <form id="loginForm">
-
-      <div class="mb-4">
-
-        <label class="
-          block
-          mb-2
-          font-semibold
-        ">
-
-          Email
-
+    <form id="loginForm" class="space-y-5">
+      <div>
+        <label class="block mb-2 font-bold text-gray-700 text-sm flex items-center gap-1.5">
+          <i data-lucide="mail" class="w-4 h-4 text-gray-400"></i> Email
         </label>
-
-        <input
-          type="email"
-          id="email"
-          class="
-            w-full
-            p-4
-            rounded-xl
-            border
-            border-gray-300
-            focus:outline-none
-            focus:ring-2
-            focus:ring-green-500
-          "
-          placeholder="Masukkan email"
-          required
+        <input 
+          type="email" 
+          id="email" 
+          class="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all placeholder:text-gray-400 text-sm" 
+          placeholder="nama@email.com" 
+          required 
         />
-
       </div>
 
-      <div class="mb-6">
-
-        <label class="
-          block
-          mb-2
-          font-semibold
-        ">
-
-          Password
-
+      <div>
+        <label class="block mb-2 font-bold text-gray-700 text-sm flex items-center gap-1.5">
+          <i data-lucide="lock" class="w-4 h-4 text-gray-400"></i> Password
         </label>
-
-        <input
-          type="password"
-          id="password"
-          class="
-            w-full
-            p-4
-            rounded-xl
-            border
-            border-gray-300
-            focus:outline-none
-            focus:ring-2
-            focus:ring-green-500
-          "
-          placeholder="Masukkan password"
-          required
+        <input 
+          type="password" 
+          id="password" 
+          class="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all placeholder:text-gray-400 text-sm" 
+          placeholder="••••••••" 
+          required 
         />
-
       </div>
 
-      <button
-        type="submit"
-        class="
-          w-full
-          py-4
-          bg-green-600
-          hover:bg-green-700
-          text-white
-          font-bold
-          rounded-xl
-          transition-all
-        "
+      <button 
+        type="submit" 
+        class="w-full py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.98] flex items-center justify-center gap-2 text-sm"
       >
-
-        Login
-
+        <span>Masuk ke Dashboard</span>
+        <i data-lucide="arrow-right" class="w-4 h-4"></i>
       </button>
-
     </form>
 
-    <p
-      id="errorText"
-      class="
-        text-red-500
-        mt-4
-        text-center
-        hidden
-      "
+    <div 
+      id="errorText" 
+      class="mt-4 p-3 bg-red-50 border border-red-100 rounded-xl flex items-center gap-2 text-red-600 text-sm justify-center hidden"
     >
-      Login gagal
-    </p>
+      <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+      <span class="font-medium">Email atau password salah. Silakan coba lagi.</span>
+    </div>
 
+    <div class="mt-8 pt-6 border-t border-gray-100 text-center">
+      <a href="home.html" class="text-sm text-gray-500 hover:text-green-600 inline-flex items-center gap-1 font-medium transition-colors">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Kembali ke Beranda
+      </a>
+    </div>
   </div>
 
   <script src="./js/api.js"></script>
-
   <script src="./js/auth.js"></script>
-
   <script src="./js/login.js"></script>
 
+  <script>
+    lucide.createIcons();
+
+    // Proteksi: Jika user SUDAH login, jangan biarkan mereka melihat halaman login ini lagi
+    document.addEventListener("DOMContentLoaded", function() {
+      if (localStorage.getItem("user_token")) {
+        window.location.href = "education.html"; // Alihkan langsung ke halaman edukasi
+      }
+    });
+  </script>
 </body>
+
 </html>

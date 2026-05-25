@@ -1,15 +1,105 @@
-let chart;
+let chart; // Variabel global penampung objek Chart.js
 
 // Mengambil data user yang login aman dari localStorage
 const user = JSON.parse(localStorage.getItem("user")) || { role: "guest" };
 
+// === 1. INISIALISASI GRAFIK KOSONG (Dijalankan sekali saat halaman terbuka) ===
+function initChart() {
+  const ctx = document.getElementById("moistureChart");
+  if (!ctx) return;
+
+  chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: [], // Akan diisi waktu (jam:menit:detik) dari sensor
+      datasets: [
+        {
+          label: "Kelembaban (%)",
+          data: [], // Akan diisi angka kelembaban tanah
+          borderColor: "#2563eb",
+          backgroundColor: "rgba(37, 99, 235, 0.05)",
+          borderWidth: 3,
+          tension: 0.4,
+          fill: true
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          min: 0,
+          max: 100 // Batas ukur kelembaban tanah 0% - 100%
+        }
+      }
+    }
+  });
+}
+
+// === 2. AMBIL DATA SENSOR & UPDATE GRAFIK SECARA REALTIME ===
 async function getSensor() {
   try {
     const data = await apiFetch("/sensor/latest");
+    
+    // Update komponen teks card utama
     document.getElementById("moistureText").innerText = `${data.moisture}%`;
     document.getElementById("statusText").innerText = data.status;
+
+    // JIKA GRAFIK SUDAH SIAP, MASUKKAN DATA SECARA REALTIME
+    if (chart) {
+      // Buat penanda waktu lokal saat data diterima (Contoh: 14:20:05)
+      const currentTime = new Date().toLocaleTimeString('id-ID', { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit' 
+      });
+
+      // Dorong data baru ke sisi kanan grafik
+      chart.data.labels.push(currentTime);
+      chart.data.datasets[0].data.push(data.moisture);
+
+      // STRATEGI 10 DATA TERAKHIR: Jika data melebihi 10, potong data paling kiri (terlama)
+      if (chart.data.labels.length > 10) {
+        chart.data.labels.shift(); // Hapus label terlama
+        chart.data.datasets[0].data.shift(); // Hapus nilai kelembaban terlama
+      }
+
+      // Perbarui grafik secara instan tanpa destroy/membuat ulang objek
+      chart.update();
+    }
   } catch (error) {
     console.error("Gagal memuat data sensor:", error);
+  }
+}
+
+// === 3. AMBIL DATA RIWAYAT AWAL (Saat Pertama Kali Buka Dashboard) ===
+async function getHistory() {
+  try {
+    const data = await apiFetch("/sensor/history");
+    
+    // Ambil maksimal 10 data terakhir dari history database Laravel
+    const limitedData = data.slice(-10);
+
+    // Jika database mengembalikan data id/waktu, mapping ke label grafik
+    const labels = limitedData.map(item => {
+      // Jika backend mengirim timestamp/created_at, ubah jadi format jam menit
+      if (item.created_at) {
+        return new Date(item.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      }
+      return `ID ${item.id}`; // Fallback pakai ID data
+    });
+    
+    const moistureData = limitedData.map(item => item.moisture);
+
+    // Masukkan data history ke dalam objek chart yang sudah ada
+    if (chart) {
+      chart.data.labels = labels;
+      chart.data.datasets[0].data = moistureData;
+      chart.update();
+    }
+  } catch (error) {
+    console.error("Gagal mengambil riwayat grafik:", error);
   }
 }
 
@@ -26,41 +116,49 @@ async function getConfig() {
 }
 
 function renderModeSection(mode) {
-  // 1. Sembunyikan seluruh kontainer dinamis terlebih dahulu
-  document.getElementById("otomatisSection").classList.add("hidden");
-  document.getElementById("jadwalSection").classList.add("hidden");
-  document.getElementById("manualSection").classList.add("hidden");
+  const otomatisSec = document.getElementById("otomatisSection");
+  const jadwalSec = document.getElementById("jadwalSection");
+  const manualSec = document.getElementById("manualSection");
 
-  // Normalisasi string mode ke huruf kecil
-  const activeMode = mode ? mode.toLowerCase() : "";
+  if (!otomatisSec || !jadwalSec || !manualSec) {
+    console.error("⚠️ Error: Salah satu elemen ID section tidak ditemukan di HTML!");
+    return;
+  }
 
-  // 2. Tampilkan section yang sesuai dengan respon database backend
+  otomatisSec.classList.add("hidden");
+  jadwalSec.classList.add("hidden");
+  manualSec.classList.add("hidden");
+
+  const activeMode = mode ? String(mode).toLowerCase().trim() : "";
+  console.log("⚙️ Sistem mendeteksi mode aktif:", `"${activeMode}"`);
+
   if (activeMode === "otomatis" || activeMode === "auto" || activeMode === "automatic") {
-    document.getElementById("otomatisSection").classList.remove("hidden");
+    otomatisSec.remove("hidden");
+    console.log("🎨 Layout otomatis berhasil dibuka.");
   } 
   else if (activeMode === "jadwal" || activeMode === "schedule") {
-    document.getElementById("jadwalSection").classList.remove("hidden");
-    // Pemicu otomatis: ambil daftar tabel saat menu jadwal terbuka
+    jadwalSec.classList.remove("hidden");
+    console.log("🎨 Layout jadwal berhasil dibuka.");
     getSchedules(); 
   } 
   else if (activeMode === "manual") {
-    document.getElementById("manualSection").classList.remove("hidden");
+    manualSec.classList.remove("hidden");
+    console.log("🎨 Layout manual berhasil dibuka.");
+  } else {
+    console.warn(`⚠️ Warning: Mode "${activeMode}" tidak terdaftar di sistem saklar.`);
   }
 }
 
 async function changeMode(mode) {
   try {
     let payloadMode = mode;
-    // Jika backend kamu menggunakan istilah 'auto', aktifkan baris di bawah ini:
-    // if (mode === "otomatis") payloadMode = "auto"; 
-
     await apiFetch("/change-mode", {
       method: "POST",
       body: JSON.stringify({ mode: payloadMode }),
     });
 
     alert(`Mode berhasil beralih ke: ${mode}`);
-    getConfig(); // Ambil ulang data config untuk memicu pembaruan layout
+    getConfig(); 
   } catch (error) {
     console.error("Gagal mengubah mode alat:", error);
   }
@@ -127,11 +225,8 @@ async function addSchedule() {
     });
 
     alert("Jadwal penyiraman berhasil ditambahkan!");
-    
-    // Reset form input setelah sukses insert data
     document.getElementById("timeInput").value = "";
     document.getElementById("durationInput").value = "";
-    
     getSchedules();
   } catch (error) {
     console.error("Gagal menambahkan jadwal:", error);
@@ -149,70 +244,33 @@ async function deleteSchedule(id) {
   }
 }
 
-async function getHistory() {
-  try {
-    const data = await apiFetch("/sensor/history");
-    const labels = data.map(item => item.id);
-    const moistureData = data.map(item => item.moisture);
-
-    renderChart(labels, moistureData);
-  } catch (error) {
-    console.error("Gagal mengambil riwayat grafik:", error);
-  }
-}
-
-function renderChart(labels, moistureData) {
-  const ctx = document.getElementById("moistureChart");
-  if (!ctx) return;
-
-  if (chart) {
-    chart.destroy();
-  }
-
-  chart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: "Kelembaban (%)",
-          data: moistureData,
-          borderColor: "#2563eb",
-          backgroundColor: "rgba(37, 99, 235, 0.05)",
-          borderWidth: 3,
-          tension: 0.4,
-          fill: true
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false
-    }
-  });
-}
-
-// Fungsi inisialisasi boot utama halaman pertama kali
+// === 4. BOOTLOADER DASHBOARD (Urutan Eksekusi Diatur Ketat) ===
 async function loadDashboard() {
-  // Mengamankan Hak Akses Pembuat Jadwal (Form Create) secara absolut
   const adminSection = document.getElementById("adminSection");
   if (adminSection) {
-    if (user.role === "admin") {
+    if (user && user.role === "admin") {
       adminSection.classList.remove("hidden");
     } else {
-      adminSection.classList.add("hidden"); // Non-admin tidak bisa melihat form input
+      adminSection.classList.add("hidden");
     }
   }
 
-  await getSensor();
-  await getConfig();
+  // A. Siapkan Canvas Chart kosong terlebih dahulu di memori DOM browser
+  initChart();
+
+  // B. Panggil data pendukung secara independen
+  getConfig();
+  
+  // C. Tarik history data awal untuk mengisi Chart pertama kali, baru setelah itu aktifkan getSensor realtime
   await getHistory();
+  getSensor();
 }
 
-// Eksekusi boot awal halaman
-loadDashboard();
+document.addEventListener("DOMContentLoaded", () => {
+  loadDashboard();
+});
 
-// INTERVAL RE-FETCH: Hanya menarik data sensor real-time setiap 5 detik agar server hemat beban
+// === 5. INTERVAL POOLING (Grafik & Teks diperbarui bersamaan tiap 5 detik) ===
 setInterval(() => {
   getSensor();
 }, 5000);

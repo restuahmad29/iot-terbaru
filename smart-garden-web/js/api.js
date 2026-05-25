@@ -1,5 +1,5 @@
 // 1. Pastikan tidak ada tanda garis miring (/) di akhir URL base
-const BASE_URL = "http://192.168.1.82:8000/api";
+const BASE_URL = "http://192.168.1.7:8000/api";
 
 async function apiFetch(endpoint, options = {}) {
   const token = localStorage.getItem("token");
